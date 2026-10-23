@@ -11,7 +11,7 @@ const defaultChars = ' .:-=+*#%@';
 let charSet = defaultChars;
 
 let currentImg = null;
-let animationId;
+let animationId = null;
 let isPaused = false;
 let speed = 50;
 let mode = 'matrix';
@@ -20,7 +20,9 @@ function resize() {
     width = canvas.width = window.innerWidth;
     height = canvas.height = window.innerHeight;
     columns = Math.floor(width / fontSize);
-    drops = new Array(columns).fill(1);
+    if (drops.length === 0) {
+        drops = new Array(columns).fill(1);
+    }
 }
 
 window.addEventListener('resize', resize);
@@ -45,7 +47,7 @@ function drawMatrix() {
 }
 
 function animateMatrix() {
-    if (isPaused) return;
+    if (isPaused || mode !== 'matrix') return;
     drawMatrix();
     animationId = setTimeout(() => requestAnimationFrame(animateMatrix), 100 - speed);
 }
@@ -81,8 +83,7 @@ function imageToAscii(img, cols) {
         }
         asciiLines.push(line);
     }
-    return asciiLines.join('
-');
+    return asciiLines.join('\n');
 }
 
 function renderAsciiArt(asciiText) {
@@ -96,8 +97,7 @@ function renderAsciiArt(asciiText) {
     asciiCtx.fillStyle = '#0F0';
     asciiCtx.font = '12px monospace';
     
-    const lines = asciiText.split('
-');
+    const lines = asciiText.split('\n');
     const lineHeight = 14;
     const startX = 20;
     const startY = 40;
@@ -115,6 +115,7 @@ document.getElementById('matrixModeBtn').addEventListener('click', () => {
     document.getElementById('imagePanel').classList.add('hidden');
     asciiCanvas.classList.add('hidden');
     canvas.classList.remove('hidden');
+    if (!isPaused) animateMatrix();
 });
 
 document.getElementById('imageModeBtn').addEventListener('click', () => {
@@ -130,12 +131,16 @@ document.getElementById('imageModeBtn').addEventListener('click', () => {
     }
 });
 
-// Image Upload
-document.getElementById('uploadBtn').addEventListener('click', () => {
-    document.getElementById('imageUpload').click();
+// Image Upload Button Fix
+const uploadBtn = document.getElementById('uploadBtn');
+const imageUpload = document.getElementById('imageUpload');
+
+uploadBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    imageUpload.click();
 });
 
-document.getElementById('imageUpload').addEventListener('change', (e) => {
+imageUpload.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (!file) return;
     
@@ -195,7 +200,9 @@ document.getElementById('speedRange').addEventListener('input', (e) => {
 
 document.getElementById('startBtn').addEventListener('click', () => {
     isPaused = false;
-    if (mode === 'matrix') animateMatrix();
+    if (mode === 'matrix') {
+        animateMatrix();
+    }
 });
 
 document.getElementById('pauseBtn').addEventListener('click', () => {
