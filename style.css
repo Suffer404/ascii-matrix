@@ -6,10 +6,22 @@ body, html {
     overflow: hidden;
     background-color: black;
     font-family: 'Courier New', Courier, monospace;
+    color: #0F0;
 }
 
 canvas {
     display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#asciiCanvas {
+    z-index: 5;
+}
+
+.hidden {
+    display: none !important;
 }
 
 .ui-container {
@@ -18,21 +30,21 @@ canvas {
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
-    color: #0F0;
     pointer-events: none;
     width: 100%;
+    z-index: 10;
 }
 
 .glow-title {
-    font-size: 4rem;
+    font-size: 3rem;
     margin-bottom: 10px;
     text-shadow: 0 0 10px #0F0, 0 0 20px #0F0;
-    letter-spacing: 10px;
+    letter-spacing: 8px;
 }
 
 .status-box {
     font-size: 0.8rem;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
 .status-dot {
@@ -51,9 +63,72 @@ canvas {
     50% { opacity: 0.3; }
 }
 
-.controls, .speed-control {
+.mode-toggle {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
     pointer-events: auto;
-    margin-top: 20px;
+}
+
+.mode-toggle button {
+    background: transparent;
+    border: 1px solid #0F0;
+    color: #0F0;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.3s;
+    font-size: 0.8rem;
+}
+
+.mode-toggle button:hover {
+    background: #0F0;
+    color: black;
+}
+
+.mode-toggle button.active {
+    background: #0F0;
+    color: black;
+}
+
+.panel {
+    background: rgba(0, 20, 0, 0.85);
+    border: 1px solid #0F0;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    pointer-events: auto;
+    max-width: 90vw;
+}
+
+.ascii-controls {
+    margin: 12px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.ascii-controls label {
+    font-size: 0.75rem;
+}
+
+.ascii-controls input[type="text"] {
+    background: black;
+    border: 1px solid #0F0;
+    color: #0F0;
+    padding: 5px 10px;
+    font-family: inherit;
+    width: 100%;
+    max-width: 300px;
+    text-align: center;
+}
+
+.ascii-controls input[type="range"] {
+    cursor: pointer;
+    accent-color: #0F0;
+    width: 200px;
 }
 
 button {
@@ -65,12 +140,18 @@ button {
     cursor: pointer;
     font-family: inherit;
     transition: all 0.3s;
+    font-size: 0.85rem;
 }
 
 button:hover {
     background: #0F0;
     color: black;
     box-shadow: 0 0 10px #0F0;
+}
+
+.controls, .speed-control {
+    pointer-events: auto;
+    margin-top: 20px;
 }
 
 .speed-control {
@@ -80,13 +161,15 @@ button:hover {
     gap: 10px;
 }
 
-input[type="range"] {
-    cursor: pointer;
-    accent-color: #0F0;
-}
-
 @media (max-width: 600px) {
     .glow-title {
-        font-size: 2rem;
+        font-size: 1.8rem;
+    }
+    .mode-toggle {
+        flex-direction: column;
+    }
+    .panel {
+        margin: 10px;
+        padding: 15px;
     }
 }

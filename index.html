@@ -3,16 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ASCII Matrix</title>
+    <title>ASCII Converter</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <canvas id="matrix"></canvas>
     <div class="ui-container">
-        <h1 class="glow-title">ASCII MATRIX</h1>
+        <h1 class="glow-title">ASCII CONVERTER</h1>
         <div class="status-box">
             <span class="status-dot"></span> SYSTEM ONLINE
         </div>
+
+        <div class="mode-toggle">
+            <button id="matrixModeBtn" class="active">MATRIX RAIN</button>
+            <button id="imageModeBtn">IMAGE TO ASCII</button>
+        </div>
+
+        <!-- Image Mode Panel -->
+        <div id="imagePanel" class="panel hidden">
+            <input type="file" id="imageUpload" accept="image/*" hidden>
+            <button id="uploadBtn">UPLOAD IMAGE</button>
+
+            <div class="ascii-controls">
+                <label>CHARACTERS</label>
+                <input type="text" id="charSet" value=" .:-=+*#%@">
+            </div>
+            <div class="ascii-controls">
+                <label>RESOLUTION: <span id="resVal">80</span></label>
+                <input type="range" id="resolution" min="20" max="200" value="80">
+            </div>
+            <div class="ascii-controls">
+                <label><input type="checkbox" id="invertCheck"> INVERT</label>
+            </div>
+            <div class="ascii-controls">
+                <label><input type="checkbox" id="rainCheck"> MATRIX RAIN BG</label>
+            </div>
+            <button id="downloadBtn">DOWNLOAD ASCII</button>
+        </div>
+
         <div class="controls">
             <button id="startBtn">START</button>
             <button id="pauseBtn">PAUSE</button>
@@ -23,6 +51,8 @@
             <input type="range" id="speedRange" min="1" max="100" value="50">
         </div>
     </div>
+
+    <canvas id="asciiCanvas" class="hidden"></canvas>
     <script src="script.js"></script>
 </body>
 </html>
