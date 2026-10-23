@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASCII Matrix</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="matrix"></canvas>
+    <div class="ui-container">
+        <h1 class="glow-title">ASCII MATRIX</h1>
+        <div class="status-box">
+            <span class="status-dot"></span> SYSTEM ONLINE
+        </div>
+        <div class="controls">
+            <button id="startBtn">START</button>
+            <button id="pauseBtn">PAUSE</button>
+            <button id="clearBtn">CLEAR</button>
+        </div>
+        <div class="speed-control">
+            <label for="speedRange">SPEED</label>
+            <input type="range" id="speedRange" min="1" max="100" value="50">
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
