@@ -1,7 +1,7 @@
 const canvas = document.getElementById('matrix');
-const asciiCanvas = document.getElementById('asciiCanvas');
 const ctx = canvas.getContext('2d');
-const asciiCtx = asciiCanvas.getContext('2d');
+const asciiPre = document.getElementById('asciiPre');
+const previewOverlay = document.getElementById('previewOverlay');
 
 let width, height, columns;
 const fontSize = 16;
@@ -86,34 +86,12 @@ function imageToAscii(img, cols) {
     return asciiLines.join('\n');
 }
 
-function renderAsciiArt(asciiText) {
-    asciiCanvas.width = window.innerWidth;
-    asciiCanvas.height = window.innerHeight;
-    asciiCtx.clearRect(0, 0, asciiCanvas.width, asciiCanvas.height);
-    
-    asciiCtx.fillStyle = 'black';
-    asciiCtx.fillRect(0, 0, asciiCanvas.width, asciiCanvas.height);
-    
-    asciiCtx.fillStyle = '#0F0';
-    asciiCtx.font = '12px monospace';
-    
-    const lines = asciiText.split('\n');
-    const lineHeight = 14;
-    const startX = 20;
-    const startY = 40;
-    
-    lines.forEach((line, index) => {
-        asciiCtx.fillText(line, startX, startY + (index * lineHeight));
-    });
-}
-
 // Mode Toggle
 document.getElementById('matrixModeBtn').addEventListener('click', () => {
     mode = 'matrix';
     document.getElementById('matrixModeBtn').classList.add('active');
     document.getElementById('imageModeBtn').classList.remove('active');
     document.getElementById('imagePanel').classList.add('hidden');
-    asciiCanvas.classList.add('hidden');
     canvas.classList.remove('hidden');
     if (!isPaused) animateMatrix();
 });
@@ -124,14 +102,9 @@ document.getElementById('imageModeBtn').addEventListener('click', () => {
     document.getElementById('matrixModeBtn').classList.remove('active');
     document.getElementById('imagePanel').classList.remove('hidden');
     canvas.classList.add('hidden');
-    asciiCanvas.classList.remove('hidden');
-    if (currentImg) {
-        const res = parseInt(document.getElementById('resolution').value);
-        renderAsciiArt(imageToAscii(currentImg, res));
-    }
 });
 
-// Image Upload Button Fix
+// Image Upload
 const uploadBtn = document.getElementById('uploadBtn');
 const imageUpload = document.getElementById('imageUpload');
 
@@ -150,59 +123,44 @@ imageUpload.addEventListener('change', (e) => {
         img.onload = () => {
             currentImg = img;
             const res = parseInt(document.getElementById('resolution').value);
-            renderAsciiArt(imageToAscii(img, res));
+            const asciiText = imageToAscii(img, res);
+            
+            // Show Preview
+            asciiPre.textContent = asciiText;
+            previewOverlay.classList.remove('hidden');
+            document.getElementById('uiContainer').style.opacity = '0';
         };
         img.src = event.target.result;
     };
     reader.readAsDataURL(file);
 });
 
-// Controls
-document.getElementById('resolution').addEventListener('input', (e) => {
-    const val = e.target.value;
-    document.getElementById('resVal').textContent = val;
-    if (currentImg) {
-        renderAsciiArt(imageToAscii(currentImg, parseInt(val)));
-    }
+// Preview Actions
+document.getElementById('backToEditBtn').addEventListener('click', () => {
+    previewOverlay.classList.add('hidden');
+    document.getElementById('uiContainer').style.opacity = '1';
 });
 
-document.getElementById('charSet').addEventListener('input', (e) => {
-    charSet = e.target.value || defaultChars;
-    if (currentImg) {
-        const res = parseInt(document.getElementById('resolution').value);
-        renderAsciiArt(imageToAscii(currentImg, res));
-    }
-});
-
-document.getElementById('invertCheck').addEventListener('change', () => {
-    if (currentImg) {
-        const res = parseInt(document.getElementById('resolution').value);
-        renderAsciiArt(imageToAscii(currentImg, res));
-    }
-});
-
-document.getElementById('downloadBtn').addEventListener('click', () => {
-    if (!currentImg) return;
-    const res = parseInt(document.getElementById('resolution').value);
-    const text = imageToAscii(currentImg, res);
-    const blob = new Blob([text], { type: 'text/plain' });
+document.getElementById('previewDownloadBtn').addEventListener('click', () => {
+    if (!asciiPre.textContent) return;
+    const blob = new Blob([asciiPre.textContent], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'ascii-art.txt';
+    a.download = 'ascii-art-by-ALIF.txt';
     a.click();
     URL.revokeObjectURL(url);
 });
 
-document.getElementById('speedRange').addEventListener('input', (e) => {
-    speed = e.target.value;
+// Controls
+document.getElementById('resolution').addEventListener('input', (e) => {
+    document.getElementById('resVal').textContent = e.target.value;
 });
 
+// Misc
 document.getElementById('startBtn').addEventListener('click', () => {
     isPaused = false;
-    if (mode === 'matrix') {
-        animateMatrix();
-    }
+    if (mode === 'matrix') animateMatrix();
 });
 
 document.getElementById('pauseBtn').addEventListener('click', () => {
@@ -213,10 +171,8 @@ document.getElementById('clearBtn').addEventListener('click', () => {
     if (mode === 'matrix') {
         ctx.clearRect(0, 0, width, height);
         drops.fill(0);
-    } else {
-        asciiCtx.clearRect(0, 0, asciiCanvas.width, asciiCanvas.height);
-        currentImg = null;
     }
 });
 
+// Start
 animateMatrix();

@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ASCII Converter</title>
+    <title>ASCII Converter by ALIF</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <canvas id="matrix"></canvas>
-    <div class="ui-container">
+    <canvas id="asciiCanvas" class="hidden"></canvas>
+
+    <div class="ui-container" id="uiContainer">
         <h1 class="glow-title">ASCII CONVERTER</h1>
         <div class="status-box">
-            <span class="status-dot"></span> SYSTEM ONLINE
+            <span class="status-dot"></span> SYSTEM ONLINE &bull; BY ALIF
         </div>
 
         <div class="mode-toggle">
@@ -35,24 +37,34 @@
             <div class="ascii-controls">
                 <label><input type="checkbox" id="invertCheck"> INVERT</label>
             </div>
-            <div class="ascii-controls">
-                <label><input type="checkbox" id="rainCheck"> MATRIX RAIN BG</label>
-            </div>
-            <button id="downloadBtn">DOWNLOAD ASCII</button>
         </div>
 
-        <div class="controls">
+        <div class="controls" id="matrixControls">
             <button id="startBtn">START</button>
             <button id="pauseBtn">PAUSE</button>
             <button id="clearBtn">CLEAR</button>
         </div>
-        <div class="speed-control">
+        <div class="speed-control" id="speedControlBox">
             <label for="speedRange">SPEED</label>
             <input type="range" id="speedRange" min="1" max="100" value="50">
         </div>
     </div>
 
-    <canvas id="asciiCanvas" class="hidden"></canvas>
+    <!-- Preview Modal / Overlay -->
+    <div id="previewOverlay" class="preview-overlay hidden">
+        <div class="preview-header">
+            <span>ASCII PREVIEW (ALIF)</span>
+            <div class="preview-actions">
+                <button id="previewDownloadBtn">DOWNLOAD</button>
+                <button id="backToEditBtn">BACK TO EDIT</button>
+            </div>
+        </div>
+        <div class="preview-container">
+            <pre id="asciiPre"></pre>
+            <div class="watermark">CREATED BY ALIF</div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
