@@ -1,7 +1,10 @@
 const canvas = document.getElementById('matrix');
 const ctx = canvas.getContext('2d');
+
 const asciiPre = document.getElementById('asciiPre');
-const previewOverlay = document.getElementById('previewOverlay');
+const workspace = document.getElementById('workspace');
+const sourceImagePreview = document.getElementById('sourceImagePreview');
+const uiContainer = document.getElementById('uiContainer');
 
 let width, height, columns;
 const fontSize = 16;
@@ -11,7 +14,6 @@ const defaultChars = ' .:-=+*#%@';
 let charSet = defaultChars;
 
 let currentImg = null;
-let animationId = null;
 let isPaused = false;
 let speed = 50;
 let mode = 'matrix';
@@ -49,7 +51,7 @@ function drawMatrix() {
 function animateMatrix() {
     if (isPaused || mode !== 'matrix') return;
     drawMatrix();
-    animationId = setTimeout(() => requestAnimationFrame(animateMatrix), 100 - speed);
+    setTimeout(() => requestAnimationFrame(animateMatrix), 100 - speed);
 }
 
 function imageToAscii(img, cols) {
@@ -86,12 +88,22 @@ function imageToAscii(img, cols) {
     return asciiLines.join('\n');
 }
 
-// Mode Toggle
+function renderAscii() {
+    if (!currentImg) return;
+    const res = parseInt(document.getElementById('resolution').value);
+    const asciiText = imageToAscii(currentImg, res);
+    asciiPre.textContent = asciiText;
+}
+
+// Mode Toggles
 document.getElementById('matrixModeBtn').addEventListener('click', () => {
     mode = 'matrix';
     document.getElementById('matrixModeBtn').classList.add('active');
     document.getElementById('imageModeBtn').classList.remove('active');
     document.getElementById('imagePanel').classList.add('hidden');
+    document.getElementById('matrixControls').classList.remove('hidden');
+    document.getElementById('speedControlBox').classList.remove('hidden');
+    workspace.classList.add('hidden');
     canvas.classList.remove('hidden');
     if (!isPaused) animateMatrix();
 });
@@ -101,7 +113,14 @@ document.getElementById('imageModeBtn').addEventListener('click', () => {
     document.getElementById('imageModeBtn').classList.add('active');
     document.getElementById('matrixModeBtn').classList.remove('active');
     document.getElementById('imagePanel').classList.remove('hidden');
+    document.getElementById('matrixControls').classList.add('hidden');
+    document.getElementById('speedControlBox').classList.add('hidden');
     canvas.classList.add('hidden');
+    
+    if (currentImg) {
+        workspace.classList.remove('hidden');
+        renderAscii();
+    }
 });
 
 // Image Upload
@@ -122,26 +141,38 @@ imageUpload.addEventListener('change', (e) => {
         const img = new Image();
         img.onload = () => {
             currentImg = img;
-            const res = parseInt(document.getElementById('resolution').value);
-            const asciiText = imageToAscii(img, res);
+            sourceImagePreview.src = event.target.result;
             
-            // Show Preview
-            asciiPre.textContent = asciiText;
-            previewOverlay.classList.remove('hidden');
-            document.getElementById('uiContainer').style.opacity = '0';
+            // Open Live Split-Screen Workspace
+            workspace.classList.remove('hidden');
+            renderAscii();
         };
         img.src = event.target.result;
     };
     reader.readAsDataURL(file);
 });
 
-// Preview Actions
-document.getElementById('backToEditBtn').addEventListener('click', () => {
-    previewOverlay.classList.add('hidden');
-    document.getElementById('uiContainer').style.opacity = '1';
+// Real-Time Live Control Updates
+document.getElementById('resolution').addEventListener('input', (e) => {
+    document.getElementById('resVal').textContent = e.target.value;
+    renderAscii();
 });
 
-document.getElementById('previewDownloadBtn').addEventListener('click', () => {
+document.getElementById('charSet').addEventListener('input', (e) => {
+    charSet = e.target.value || defaultChars;
+    renderAscii();
+});
+
+document.getElementById('invertCheck').addEventListener('change', () => {
+    renderAscii();
+});
+
+// Workspace Actions
+document.getElementById('closeWorkspaceBtn').addEventListener('click', () => {
+    workspace.classList.add('hidden');
+});
+
+document.getElementById('paneDownloadBtn').addEventListener('click', () => {
     if (!asciiPre.textContent) return;
     const blob = new Blob([asciiPre.textContent], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
@@ -152,12 +183,7 @@ document.getElementById('previewDownloadBtn').addEventListener('click', () => {
     URL.revokeObjectURL(url);
 });
 
-// Controls
-document.getElementById('resolution').addEventListener('input', (e) => {
-    document.getElementById('resVal').textContent = e.target.value;
-});
-
-// Misc
+// Matrix Controls
 document.getElementById('startBtn').addEventListener('click', () => {
     isPaused = false;
     if (mode === 'matrix') animateMatrix();
@@ -174,5 +200,4 @@ document.getElementById('clearBtn').addEventListener('click', () => {
     }
 });
 
-// Start
 animateMatrix();

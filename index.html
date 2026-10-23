@@ -8,8 +8,31 @@
 </head>
 <body>
     <canvas id="matrix"></canvas>
-    <canvas id="asciiCanvas" class="hidden"></canvas>
 
+    <!-- Split Screen Workspace for Image to ASCII Mode -->
+    <div id="workspace" class="workspace hidden">
+        <div class="preview-pane">
+            <h3>ORIGINAL IMAGE</h3>
+            <div class="image-preview-box">
+                <img id="sourceImagePreview" alt="Upload an image">
+            </div>
+        </div>
+        <div class="ascii-pane">
+            <div class="ascii-pane-header">
+                <h3>ASCII ART PREVIEW (ALIF)</h3>
+                <div class="pane-actions">
+                    <button id="paneDownloadBtn">DOWNLOAD</button>
+                    <button id="closeWorkspaceBtn">&times; CLOSE</button>
+                </div>
+            </div>
+            <div class="ascii-scroll-container">
+                <pre id="asciiPre"></pre>
+                <div class="watermark">BY ALIF</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main UI Container -->
     <div class="ui-container" id="uiContainer">
         <h1 class="glow-title">ASCII CONVERTER</h1>
         <div class="status-box">
@@ -24,18 +47,18 @@
         <!-- Image Mode Panel -->
         <div id="imagePanel" class="panel hidden">
             <input type="file" id="imageUpload" accept="image/*" hidden>
-            <button id="uploadBtn">UPLOAD IMAGE</button>
+            <button id="uploadBtn" class="primary-btn">📁 UPLOAD IMAGE TO CONVERT</button>
 
             <div class="ascii-controls">
                 <label>CHARACTERS</label>
                 <input type="text" id="charSet" value=" .:-=+*#%@">
             </div>
             <div class="ascii-controls">
-                <label>RESOLUTION: <span id="resVal">80</span></label>
-                <input type="range" id="resolution" min="20" max="200" value="80">
+                <label>RESOLUTION: <span id="resVal">70</span></label>
+                <input type="range" id="resolution" min="20" max="150" value="70">
             </div>
             <div class="ascii-controls">
-                <label><input type="checkbox" id="invertCheck"> INVERT</label>
+                <label><input type="checkbox" id="invertCheck"> INVERT COLORS</label>
             </div>
         </div>
 
@@ -47,21 +70,6 @@
         <div class="speed-control" id="speedControlBox">
             <label for="speedRange">SPEED</label>
             <input type="range" id="speedRange" min="1" max="100" value="50">
-        </div>
-    </div>
-
-    <!-- Preview Modal / Overlay -->
-    <div id="previewOverlay" class="preview-overlay hidden">
-        <div class="preview-header">
-            <span>ASCII PREVIEW (ALIF)</span>
-            <div class="preview-actions">
-                <button id="previewDownloadBtn">DOWNLOAD</button>
-                <button id="backToEditBtn">BACK TO EDIT</button>
-            </div>
-        </div>
-        <div class="preview-container">
-            <pre id="asciiPre"></pre>
-            <div class="watermark">CREATED BY ALIF</div>
         </div>
     </div>
 
